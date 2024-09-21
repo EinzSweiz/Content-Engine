@@ -31,7 +31,7 @@ jobs:
             metadata:
               name: content-engine-secret 
           stringData:
-            DJANGO_SECRET_KEY: "${{ secrets.DJANGO_SECRET_KEY }}""
+            DJANGO_SECRET_KEY: "${{ secrets.DJANGO_SECRET_KEY }}"
           EOF
       - name: Apply K8s Manifest
         run: |
