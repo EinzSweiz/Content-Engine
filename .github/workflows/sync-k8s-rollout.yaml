@@ -27,9 +27,9 @@ jobs:
           mkdir -p k8s/
           cat <<EOF > k8s/1-secret.yaml
           apiVersion: v1
-            kind: Secret
-            metadata:
-              name: content-engine-secret 
+          kind: Secret
+          metadata:
+            name: content-engine-secret 
           stringData:
             DJANGO_SECRET_KEY: "${{ secrets.DJANGO_SECRET_KEY }}"
           EOF
