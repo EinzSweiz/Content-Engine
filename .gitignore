@@ -26,6 +26,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 .kube
+k8s/*secret.yaml
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

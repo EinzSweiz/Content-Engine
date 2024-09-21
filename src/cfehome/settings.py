@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-khd0_3rz)ho138wxq*6nvj9kbpb_ga(4_3gf069m_4q6fuahn7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True #twingate
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #myapps
+    'landing.apps.LandingConfig',
 ]
 
 MIDDLEWARE = [
