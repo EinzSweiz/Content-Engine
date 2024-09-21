@@ -3,6 +3,6 @@ from django.urls import path
 
 app_name = 'landing'
 
-urlpatters = [
+urlpatterns = [
     path('', views.home_page_view, name='home')
 ]
