@@ -1,0 +1,28 @@
+name: Sync K8s Rollout
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  k8s_apply:
+    runs-on: ubuntu-latest
+    env:
+      DEPLOYMENT_NAME: ${{ secrets.DEPLOYMENT_NAME || 'content-engine-deployment'}}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+      - name: Configure Kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" > /.kube/config 
+      - name: Apply K8s Manifest
+        run: |
+          kubectl apply -f k8s/
+      - name: Trigger K8s Deployment Rollout
+        run: |
+          kubectl rollout restart deployments/${{ env.DEPLOYMENT_NAME }}
+      - name: Check K8s Deployment Status
+        run: |
+          kubectl rollout status deployments/${{ env.DEPLOYMENT_NAME }}
