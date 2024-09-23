@@ -27,6 +27,7 @@ share/python-wheels/
 MANIFEST
 .kube
 k8s/*secret.yaml
+src/static-root
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
