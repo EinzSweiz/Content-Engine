@@ -31,8 +31,8 @@ jobs:
           metadata:
             name: content-engine-secret 
           stringData:
-            DEBUG: "0"
-            DATABASE_URL: ""
+            DEBUG: "1"
+            DATABASE_URL: "${{ secrets.DATABASE_URL }}"
             DJANGO_SECRET_KEY: "${{ secrets.DJANGO_SECRET_KEY }}"
           EOF
       - name: Apply K8s Manifest
