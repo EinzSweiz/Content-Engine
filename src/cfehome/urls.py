@@ -19,10 +19,12 @@ from django.urls import path, include
 from . import views
 from projects import urls as projects_urls
 from landing import urls as landing_urls
+from items import urls as items_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home_page, name='home'),
     path('landing/', include(landing_urls, namespace='landing')),
     path('projects/', include(projects_urls, namespace='projects')),
+    path('items/', include(items_urls, namespace='items')),
 ]

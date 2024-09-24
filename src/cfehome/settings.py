@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     #myapps
     'landing.apps.LandingConfig',
     'projects.apps.ProjectsConfig',
+    'items.apps.ItemsConfig',
 ]
 
 MIDDLEWARE = [

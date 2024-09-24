@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Are you sure you want delete {{ instance.title }}?</h1>
+
+{% include 'projects/snippets/forms.html' with form=form btn_label='Yes, delete'%}
+
+{% endblock content %}

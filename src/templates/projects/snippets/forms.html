@@ -1,0 +1,10 @@
+<form class="tw-form" action="" method="post">
+    {% csrf_token %}
+    {{ form.as_div }}
+    <div> 
+        <button type="submit" id="submit-btn">
+            {% if btn_label %}{{ btn_label }}{% else %}Submit{% endif %}
+        </button>
+        <button type="button" class="back-button" onclick="window.history.back()">Back</button>
+    </div>
+</form>
