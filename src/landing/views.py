@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 
 def home_page_view(request):
-    print(request.project.is_activated)
+    print(request.project)
     return render(request, 'landing/home.html', {})
 
 
