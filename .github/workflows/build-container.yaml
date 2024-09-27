@@ -61,9 +61,11 @@ jobs:
         echo "Failed to log in to Docker Hub. Please check your credentials."
         exit 1
 
-    - name: Tag the container as latest as well specific version
+    - name: Tag the container as latest as well as a specific version
       run: |
         docker tag ${{ env.DOCKER_HUB_REPO }}:${{ env.DOCKER_HUB_IMAGE_TAG }} ${{ env.DOCKER_HUB_REPO }}:latest
+        docker tag ${{ env.DOCKER_HUB_REPO }}:${{ env.DOCKER_HUB_IMAGE_TAG }} ${{ env.DOCKER_HUB_REPO }}:v1.0.0
+
 
     - name: Push the specific version and latest tag to Docker Hub
       run: docker push ${{ env.DOCKER_HUB_REPO }} --all-tags
