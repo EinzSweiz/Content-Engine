@@ -22,7 +22,7 @@ from items import urls as items_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('landing/', include(landing_urls, namespace='landing')),
+    path('', include(landing_urls, namespace='landing')),
     path('projects/', include(projects_urls, namespace='projects')),
     path('items/', include(items_urls, namespace='items')),
 ]

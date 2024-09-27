@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'landing.apps.LandingConfig',
     'projects.apps.ProjectsConfig',
     'items.apps.ItemsConfig',
+    #installed apps
+    "django_htmx",
 ]
 
 MIDDLEWARE = [
@@ -55,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'projects.middleware.ProjectMiddleware',
+     "django_htmx.middleware.HtmxMiddleware",
 ]
 
 ROOT_URLCONF = 'cfehome.urls'
@@ -71,6 +74,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'projects.context_processors.user_projects_context',
+                'cfehome.context_processors.site_urls',
 
             ],
         },

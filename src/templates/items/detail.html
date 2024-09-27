@@ -1,7 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>{{ instance.title }}</h1>
+<div class="flex">
 
-{% include 'items/snippets/forms.html' with form=form btn_label='Save'%}
+    <div class="grow">
+
+        <div class="max-h-[80vh] overflow-y-auto" hx-get="{{ instance.get_files_url }}" hx-trigger="load"></div>
+
+    </div>
+    <div>
+
+        {% include 'items/snippets/forms.html' with form=form btn_label='Save'%}
+    </div>
+</div>
 
 {% endblock content %}

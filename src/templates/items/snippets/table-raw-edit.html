@@ -1,0 +1,19 @@
+<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" id="item-table-raw-{{ instance.id }}">
+    <td colspan="4">
+        <form class="tw-form" 
+        hx-swap='outerHTML' 
+        hx-target="#item-table-raw-{{ instance.id }}"
+        action="{{ instance.get_edit_url }}" 
+        hx-post='{{ instance.get_edit_url }}' 
+        method="post">
+        {% csrf_token %}
+        {{ form.as_div }}
+        <div> 
+            <button type="submit" id="submit-btn">
+                {% if btn_label %}{{ btn_label }}{% else %}Submit{% endif %}
+            </button>
+            <button type="button" class="back-button" onclick="window.history.back()">Back</button>
+        </div>
+    </form>
+    </td>
+</tr>

@@ -1,0 +1,26 @@
+{% load item_status_select %}
+<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+    id="item-table-raw-{{ instance.id }}">
+    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+        <input name="title" type="text" hx-patch='{{ instance.get_edit_url }}' 
+        hx-target='#item-table-raw-{{ instance.id }}'
+        hx-swap='outerHTML'
+        hx-trigger='blur change delay:500ms'
+        value="{{ instance.title }}"
+        class="border-none focus:ring-0 focus:outline-none cursor-text">
+    
+ 
+     </th>
+    <td class="px-6 py-4">
+        {% item_status_select instance %}
+    </td>
+    <td class="px-6 py-4">
+        {{ instance.updated|timesince }} ago
+    </td>
+    <td class="px-6 py-4">
+        <a href="{{ instance.get_absolute_url }}">View</a> | 
+        <button hx-post="{{ instance.get_delete_url }}" hx-confirm="Are you sure you want delete item?">
+            Delete
+        </button> 
+    </td>
+</tr>

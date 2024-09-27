@@ -30,7 +30,15 @@ class Project(models.Model):
 
     def get_absolute_url(self):
         return reverse('projects:project_update', kwargs={'handle': self.handle})
-
+    
+    def get_activate_url(self):
+        return reverse('projects:project-activate', kwargs={'handle': self.handle})
+    
+    def get_prefix(self, trailing_slash=True):
+        if trailing_slash:
+            return f'projects/{self.id}/'
+        return f'projects/{self.id}'    
+    
     @property
     def is_activated(self):
         return True

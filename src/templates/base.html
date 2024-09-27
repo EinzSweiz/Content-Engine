@@ -8,13 +8,25 @@
     <title>{% block head_title %}CFE Home{% endblock %}</title>
     {% include 'head/css.html' %}
 </head>
-<body>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
     <div>
         {% include 'navbar/base.html' %}
+        <div class="max-w-screen-xl mx-auto p-4">
         {% include 'head/messages.html' %}
         {% block content %}{% endblock %}
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js" defer></script>
+    <script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script>
+
+    <script>
+        document.body.addEventListener('htmx:xhr:loadstart', function() {
+            document.body.classList.add('htmx-request');
+        })
+        document.body.addEventListener('htmx:xhr:loadend', function() {
+            document.body.classList.remove('htmx-request');
+        })
+    </script>
 </body>
 </html>

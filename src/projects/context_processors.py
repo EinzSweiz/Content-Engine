@@ -1,9 +1,11 @@
 from .models import Project
-
+from . import cache as projects_cache
 def user_projects_context(request):
-    qs = Project.objects.none()
+    username = None
+    project_qs = Project.objects.none()
     if request.user.is_authenticated:
-        qs = Project.objects.filter(owner=request.user)
+        username = request.user.username
+        project_qs = projects_cache.get_user_projects(username=username)
     return {
-        'project_list': qs,
+        'project_list': project_qs,
     }

@@ -5,7 +5,7 @@
 {% include 'projects/snippets/list.html' with object_list=item_qs %}
 {% else %}
 <div>
-    <p>Activate project to continue </p>
+    <button onclick="window.location.href='{{ instance.get_activate_url }}'">Activate Project</button>
 </div>
 {% endif %}
 
