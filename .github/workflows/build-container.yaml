@@ -11,14 +11,20 @@ on:
       - 'src/**'
   workflow_dispatch:
     
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     env:
       BASE_DIR: ${{ secrets.BASE_DIR || 'src/' }}
+      # Disable Django's collectstatic command by default
       DISABLE_COLLECTSTATIC: ${{ secrets.DISABLE_COLLECTSTATIC || 1 }}
-      BUILDPACK_BUILDER: ${{ secrets.BUILDPACK_BUILDER || 'gcr.io/buildpacks/builder:v2' }}  # Updated lifecycle image
+      # Default to 'gcr.io/buildpacks/builder' if BUILDPACK_BUILDER secret is not set.
+      # https://cloud.google.com/docs/buildpacks/builders
+      BUILDPACK_BUILDER: ${{ secrets.BUILDPACK_BUILDER || 'gcr.io/buildpacks/builder' }}
+      # Docker Image Tag, default to GitHub sha if not set
       DOCKER_HUB_IMAGE_TAG: ${{ secrets.DOCKER_HUB_IMAGE_TAG || github.sha }}
+      # Default DOCKER_REPO to GitHub's username/repository if not provided as a secret
       DOCKER_HUB_REPO: ${{ secrets.DOCKER_HUB_REPO || github.repository }}
     
     steps:
@@ -26,7 +32,6 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-    
     - name: Install requirements & collectstatic
       run: |
         cd ${{ env.BASE_DIR }}
@@ -56,10 +61,9 @@ jobs:
         echo "Failed to log in to Docker Hub. Please check your credentials."
         exit 1
 
-    - name: Tag the container as latest as well as a specific version
+    - name: Tag the container as latest as well specific version
       run: |
         docker tag ${{ env.DOCKER_HUB_REPO }}:${{ env.DOCKER_HUB_IMAGE_TAG }} ${{ env.DOCKER_HUB_REPO }}:latest
-        docker tag ${{ env.DOCKER_HUB_REPO }}:${{ env.DOCKER_HUB_IMAGE_TAG }} ${{ env.DOCKER_HUB_REPO }}:v1.0.0
 
     - name: Push the specific version and latest tag to Docker Hub
       run: docker push ${{ env.DOCKER_HUB_REPO }} --all-tags
