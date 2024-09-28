@@ -11,7 +11,6 @@ from cfehome.env import config
 import s3
 import pathlib
 import mimetypes
-import boto3
 from django_htmx.http import HttpResponseClientRedirect
 
 AWS_ACCESS_KEY_ID=config('AWS_ACCESS_KEY_ID', cast=str)
@@ -74,7 +73,7 @@ def item_files_delete_view(request, id=None, name=None):
 def item_files_view(request, id=None):
     instance = get_object_or_404(Item, id=id, project=request.project)
     if not request.htmx:
-        detail_url = instance.get_absolute_url
+        detail_url = instance.get_absolute_url()
         return redirect(detail_url)
     template_name = 'items/snippets/object_table.html'
     prefix = instance.get_prefix()
@@ -105,6 +104,7 @@ def item_files_view(request, id=None):
                 Params={
                     'Bucket': AWS_BUCKET_NAME,
                     'Key': key,
+                    'ResponseContentType': 'image/png',
                 },
                 ExpiresIn=36000,
             )
