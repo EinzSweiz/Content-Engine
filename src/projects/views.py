@@ -1,21 +1,31 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Project
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required as login_required
 from . import forms
+from django.http import Http404
 
 
 PROJECT_CAN_DELETE_ITEM_THRESHOLD = 2
 
 @login_required
 def project_list_view(request):
-    object_list = Project.objects.filter(owner=request.user)
+    object_list = Project.objects.has_access(request.user)
     return render(request, 'projects/list.html', {'object_list': object_list})
 
 
+def get_project_or_404(request, handle=None, skip404=False):
+    object_list = Project.objects.filter(handle=handle).has_access(request.user)
+    if not object_list.exists() and not skip404:
+        raise Http404
+    if not object_list.exists() and skip404:
+        return None
+    return object_list.first()
+
 @login_required
 def project_detail_update_view(request, handle=None):
-    instance = get_object_or_404(Project, handle=handle, owner=request.user)
+    instance = get_project_or_404(request, handle=handle)
     form = forms.ProjectUpdateForm(request.POST or None, instance=instance)
     items_qs = instance.item_set.all()
 
@@ -34,7 +44,7 @@ def project_detail_update_view(request, handle=None):
 
 @login_required
 def project_delete_view(request, handle=None):
-    instance = get_object_or_404(Project, handle=handle, owner=request.user)
+    instance = get_project_or_404(request, handle=handle)
     items_qs = instance.item_set.all()
     item_count = items_qs.count()
     items_exists = items_qs.exists()
@@ -69,11 +79,7 @@ def delete_project_from_session(request):
         pass
 
 def activate_project_view(request, handle=None):
-    try:
-        project_object = Project.objects.filter(owner=request.user, handle=handle)
-    except:
-        project_object = None
-        print('not here')
+    project_object = get_project_or_404(request, handle=handle, skip404=True)
     if project_object is None:
         delete_project_from_session(request)
         messages.error(request, 'Project could not activate. Try again')

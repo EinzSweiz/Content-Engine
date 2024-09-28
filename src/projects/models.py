@@ -5,6 +5,7 @@ from django.utils.text import slugify
 from cfehome.utils.generators import unique_slugify
 from django.urls import reverse
 from . import validator
+from django.db.models import Q
 
 User = settings.AUTH_USER_MODEL
 
@@ -12,8 +13,32 @@ class AnonymousProject():
     value = None
     is_activated = False
 
+class ProjectUser(models.Model):
+    project = models.ForeignKey("Project", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now=True, auto_now_add=False)
+    updated = models.DateTimeField(auto_now=False, auto_now_add=True)
+    active = models.BooleanField(default=True)
+
+
+class ProjectQuerySet(models.QuerySet):
+    def has_access(self, user=None):
+        if user == None:
+            return self.none()
+        return self.filter(
+            Q(owner=user) |
+            Q(projectuser__user=user,
+              projectuser__active=True)
+        )
+    
+class ProjectManager(models.Manager):
+    def get_queryset(self):
+        return  ProjectQuerySet(self.model, using=self._db)
+    def has_access(self, user=None):
+        return self.get_queryset().has_access(user=user)
 class Project(models.Model):
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='owned_projects')
+    users = models.ManyToManyField(User, blank=True, related_name='projects', through=ProjectUser)
     title = models.CharField(max_length=120, null=True, blank=True)
     handle = models.SlugField(null=True, blank=True, unique=True,
                             validators=[validator.validate_project_handle])
@@ -24,6 +49,7 @@ class Project(models.Model):
     active = models.BooleanField(default=True)
     updated = models.DateTimeField(auto_now=True, auto_now_add=False)
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+    objects = ProjectManager()
 
     def get_delete_url(self):
         return reverse('projects:project_delete', kwargs={'handle': self.handle})

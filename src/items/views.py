@@ -1,11 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from . import forms
-from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required as login_required
 from .models import Item
 from projects.decorators import project_required
 from cfehome import http
-from django.http import QueryDict, HttpResponse
+from django.http import QueryDict, HttpResponse, JsonResponse
 from cfehome.env import config
 import s3
 import pathlib
@@ -18,6 +19,31 @@ AWS_SECRET_ACCESS_KEY=config('AWS_SECRET_ACCESS_KEY', cast=str)
 AWS_BUCKET_NAME=config('AWS_BUCKET_NAME', cast=str)
 
 
+@project_required
+@login_required
+def item_upload_view(request, id=None):
+    instance = get_object_or_404(Item, id=id, project=request.project)
+    template_name = 'items/upload.html'
+    prefix = instance.get_prefix()
+    if request.htmx:
+        template_name = 'items/snippets/upload.html'
+    if request.method == 'POST' and request.FILES.get('file'):
+        file = request.FILES['file']
+        client = s3.S3Client(
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+            default_bucket_name=AWS_BUCKET_NAME,
+            region_name='eu-north-1'
+        ).client
+        if not prefix.endswith('/'):
+            prefix += '/'
+        file_path = f'{prefix}{file.name}'
+        try:
+            client.upload_fileobj(file, AWS_BUCKET_NAME, file_path)
+            return JsonResponse({'message': 'File uploaded successfully!'})
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=500)
+    return render(request, template_name, {'instance': instance})
 
 @project_required
 @login_required
@@ -38,6 +64,8 @@ def item_files_delete_view(request, id=None, name=None):
     ).client
     prefix = instance.get_prefix()
     key = f'{prefix}{name}'
+    if key.endswith('/'):
+        key = key[:-1]
     client.delete_object(Bucket=AWS_BUCKET_NAME, Key=key)
     return HttpResponse(f'{name} Deleted')
 

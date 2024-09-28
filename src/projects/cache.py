@@ -11,4 +11,5 @@ def get_user_projects(username=None, limit=5, set_on_none=True):
             projects_qs = Project.objects.filter(
                 owner__username__iexact=username
             ).order_by('-updated')[:limit]
+            django_cache.set(cache_str, projects_qs)
     return projects_qs

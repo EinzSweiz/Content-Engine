@@ -1,10 +1,47 @@
+<div class="relative overflow-x-auto">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">Image</th>
+                <th scope="col" class="px-6 py-3">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for object_dict in object_list %}
+            <tr class="bg-white dark:bg-gray-800">
+                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
+                    {% if object_dict.is_image %}
+                        <img class="mx-h-2" src="{{ object_dict.url }}" alt="" style="max-width: 30%; height: auto; padding: 10px;">
+                    {% endif %}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex space-x-3"> <!-- Flex container for horizontal alignment -->
+                        <a href="{{ object_dict.url }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
+                        <a href="{{ object_dict.download_url }}" class="font-medium text-gray-600 dark:text-gray-500 hover:underline">Download</a>
+                        {% if instance %}
+                        <button 
+                            hx-confirm='Are you sure you want to delete this?'
+                            hx-target='#object-{{ forloop.counter }}'
+                            hx-swap='innerHTML'
+                            class="font-medium text-red-600 dark:text-red-500 hover:underline"
+                            hx-post='{{ instance.get_absolute_url }}files/{{ object_dict.name }}'>
+                            Delete
+                        </button>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 
-{% for object_dict in object_list %}
+
+{% comment %} 
 
 <div class="mb-5" id="object-{{ forloop.counter}}">
     {{ object_dict.name }} 
-    {{object_dict.is_image}}
 
     {% if object_dict.is_image %}
     <img src="{{ object_dict.url }}" alt="" style="max-width: 50%; height: auto; padding: 10px;">
@@ -23,4 +60,4 @@
     {% endif %}
 </div>
 
-{% endfor %}
+{% endfor %} {% endcomment %}
